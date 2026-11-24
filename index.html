@@ -8,12 +8,35 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="header">My Library</div>
+    <div class="header">
+        <div>My Library</div>
+        <button command="show-modal" commandfor="dialog">New Book</button>
+    </div>
     
     <div class="body">
-        <div class="card">The guy</div>
+        
     </div>
 
     <div class="footer">The Odin Project 2026</div>
+
+    <dialog id="dialog">
+        <form action="" id="user-form">
+            <label for="author">Author:</label>
+            <input type="text" name="author" id="author">
+
+            <label for="title">Title: </label>
+            <input type="text" name="title" id="title">
+
+            <label for="pages">Number of pages:</label>
+            <input type="number" name="num-pages" id="pages">
+
+            <label for="read">Have you read it: </label>
+            <select name="read" id="read">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+            <button type="submit">Submit</button>
+        </form>
+    </dialog>
 </body>
 </html>
