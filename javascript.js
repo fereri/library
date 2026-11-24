@@ -1,29 +1,10 @@
-const myLibrary = [];
-
-//DOM variables
 const body = document.querySelector(".body");
+const form = document.getElementById("user-form");
 
-const form = document.getElementById('user-form');
+myLibrary = [];
 
-let userData;
-
-form.addEventListener('submit', function (event) {
-  // 1. Prevent the page from refreshing
-  event.preventDefault();
-
-  // 2. Capture all form fields using FormData
-  const formData = new FormData(event.target);
-
-  // 3. Convert to a standard JavaScript object
-  // const data = Object.fromEntries(formData.entries());
-  userData = Object.fromEntries(formData.entries());
-
-  addBookToLibrary(userData);
-  // console.log(data); // Output: { username: "alex", email: "alex@example.com" }
-});
-
-function Book(id, author, title, pages, read) {
-    this.id = id;
+function Book(author, title, pages, read) {
+    this.id = crypto.randomUUID();
     this.author = author;
     this.title = title;
     this.pages = pages;
@@ -32,55 +13,71 @@ function Book(id, author, title, pages, read) {
 
 Book.prototype.read = function() {
     this.read = !this.read;
-    console.log(this.read);
 }
 
-function addBookToLibrary(data) {
-    let book = new Book(data["id"], data["author"], data["title"], data["num-pages"], data["read"]);
+function addBookToLibrary(author, title, pages, read) {
+    let book = new Book(author, title, pages, read);
+
     myLibrary.push(book);
-    displayBooks(myLibrary);
 }
 
-function displayBooks(library) {
-    console.log(library);
+form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    let formData = new FormData(form);
+
+    addBookToLibrary(formData.get("author"), formData.get("title"), formData.get("pages"), formData.get("read"));
+
+    displayBooks();
+})
+
+function deleteBook(id) {
+    myLibrary = myLibrary.filter(book => book.id !== id);
+    displayBooks();
+}
+
+function displayBooks() {
+
     body.replaceChildren();
-    for (let book in library) {
-        console.log(myLibrary[book]);
+
+    myLibrary.forEach((book) => {
         let card = document.createElement("div");
         card.classList.add("card");
-        card.setAttribute("id", crypto.randomUUID());
+        card.setAttribute("id", book.id);
 
         let author = document.createElement("div");
-        author.textContent = library[book]["author"];
-        
+        author.textContent = book.author;
+        author.classList.add("author");
+
         let title = document.createElement("div");
-        title.textContent = library[book]["title"];
-        
+        title.textContent = book.title;
+
         let pages = document.createElement("div");
-        pages.textContent = library[book]["pages"];
+        pages. textContent = book.pages;
 
         let read = document.createElement("div");
-        read.textContent = library[book]["read"];
+        read.textContent = book.read;
 
-        let button = document.createElement("button");
-        button.textContent = "delete";
-        button.addEventListener("click", function () {
-            button.closest(".card").remove();
-        });
+        let deleteButton = document.createElement("button");
+        deleteButton.textContent = "delete";
+        deleteButton.addEventListener("click", () => {
+            deleteBook(book.id);
+        })
 
         let readButton = document.createElement("button");
         readButton.textContent = "read";
         readButton.addEventListener("click", () => {
-            read.textContent = "read";
-        });
+            book.read = "yes";
+            displayBooks();
+        })
 
 
         card.appendChild(author);
         card.appendChild(title);
         card.appendChild(pages);
         card.appendChild(read);
-        card.appendChild(button);
+        card.appendChild(deleteButton);
         card.appendChild(readButton);
         body.appendChild(card);
-    }
+    })
 }
